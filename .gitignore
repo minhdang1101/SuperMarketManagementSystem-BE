@@ -37,3 +37,4 @@ uploads/
 *.log
 .idea/
 src/main/resources/application-local.properties
+PHAN_CONG_CONG_VIEC.md
