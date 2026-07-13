@@ -102,7 +102,7 @@ public class VNPayConfig {
                 }
                 sb.append(fieldName);
                 sb.append("=");
-                sb.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8));
+                sb.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
             }
         }
         return hmacSHA512(hashSecret, sb.toString());
@@ -121,6 +121,9 @@ public class VNPayConfig {
         }
         if (ipAddress != null && ipAddress.contains(",")) {
             ipAddress = ipAddress.split(",")[0].trim();
+        }
+        if ("0:0:0:0:0:0:0:1".equals(ipAddress) || "::1".equals(ipAddress)) {
+            ipAddress = "127.0.0.1";
         }
         return ipAddress != null ? ipAddress : "127.0.0.1";
     }

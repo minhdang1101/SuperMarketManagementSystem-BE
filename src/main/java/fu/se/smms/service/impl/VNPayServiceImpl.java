@@ -97,10 +97,10 @@ public class VNPayServiceImpl implements VNPayService {
                         query.append('&');
                     }
                     hashData.append(fieldName).append('=')
-                            .append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8));
+                            .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
                     query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8))
                             .append('=')
-                            .append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8));
+                            .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
                 }
             }
             
