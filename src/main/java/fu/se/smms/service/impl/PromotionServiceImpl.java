@@ -121,17 +121,20 @@ public class PromotionServiceImpl implements PromotionService {
     @Transactional
     public PromotionResponseDTO update(Integer id, PromotionUpdateReqDTO dto) {
         log.info("Cập nhật Promotion id={}, name={}", id, dto.getName());
-
+        
         Promotion promotion = promotionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MSG01 - Không tìm thấy Promotion với id: " + id));
 
+        // Validate dates - for update, allow dates in the past if promotion already started
         if (dto.getValidTo().isBefore(dto.getValidFrom())) {
             throw new InvalidPromotionRuleException("MSG03",
                     "BR-04: Ngày kết thúc (" + dto.getValidTo() + ") phải >= ngày bắt đầu (" + dto.getValidFrom() + ")");
         }
 
+        // Validate discount value
         validateDiscountValue(dto.getDiscountType(), dto.getDiscountValue());
 
+        // Validate type-specific fields for BUY_X_GET_Y
         if (dto.getDiscountType() == DiscountType.BUY_X_GET_Y) {
             if (dto.getBuyQuantity() == null || dto.getGetQuantity() == null || dto.getGetProductId() == null) {
                 throw new InvalidPromotionRuleException("MSG05",
@@ -139,6 +142,7 @@ public class PromotionServiceImpl implements PromotionService {
             }
         }
 
+        // Update basic fields
         promotion.setName(dto.getName().trim());
         promotion.setDescription(dto.getDescription() != null ? dto.getDescription().trim() : null);
         promotion.setDiscountType(dto.getDiscountType());
@@ -147,11 +151,12 @@ public class PromotionServiceImpl implements PromotionService {
         promotion.setStartDate(dto.getValidFrom());
         promotion.setEndDate(dto.getValidTo());
         promotion.setMinOrderAmount(dto.getMinOrderAmount());
-
+        
         if (dto.getActive() != null) {
             promotion.setActive(dto.getActive());
         }
 
+        // Update target (category or products)
         if (dto.getApplyTarget() == ApplyTarget.CATEGORY) {
             Category category = validateAndGetCategory(dto.getCategoryId());
             promotion.setCategory(category);
@@ -162,6 +167,7 @@ public class PromotionServiceImpl implements PromotionService {
             promotion.setCategory(null);
         }
 
+        // Update BUY_X_GET_Y specific fields
         if (dto.getDiscountType() == DiscountType.BUY_X_GET_Y) {
             promotion.setBuyQuantity(dto.getBuyQuantity());
             promotion.setGetQuantity(dto.getGetQuantity());
@@ -177,7 +183,7 @@ public class PromotionServiceImpl implements PromotionService {
 
         promotion = promotionRepository.save(promotion);
         log.info("Promotion updated successfully: id={}", id);
-
+        
         return toResponseDTO(promotion);
     }
 
@@ -185,13 +191,13 @@ public class PromotionServiceImpl implements PromotionService {
     @Transactional
     public void delete(Integer id) {
         log.info("Xóa Promotion id={}", id);
-
+        
         Promotion promotion = promotionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MSG01 - Không tìm thấy Promotion với id: " + id));
 
         promotion.setActive(false);
         promotionRepository.save(promotion);
-
+        
         log.info("Promotion soft-deleted: id={}", id);
     }
 

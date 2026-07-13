@@ -8,6 +8,7 @@ import fu.se.smms.enums.DiscountType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+
 public interface PromotionService {
 
     PromotionResponseDTO create(PromotionCreateReqDTO dto);

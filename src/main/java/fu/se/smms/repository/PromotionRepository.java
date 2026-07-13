@@ -68,6 +68,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
                            @Param("active") Boolean active,
                            Pageable pageable);
 
+
     @Query("""
             SELECT p FROM Promotion p
             LEFT JOIN FETCH p.category
@@ -75,6 +76,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
             WHERE UPPER(p.promoCode) = UPPER(:promoCode) AND p.active = true
             """)
     Optional<Promotion> findByPromoCodeAndActiveTrue(@Param("promoCode") String promoCode);
+
 
     @Query("""
             SELECT DISTINCT p FROM Promotion p

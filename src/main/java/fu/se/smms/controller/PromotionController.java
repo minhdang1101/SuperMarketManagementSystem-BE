@@ -75,6 +75,7 @@ public class PromotionController {
         return ResponseEntity.ok(promotionService.findById(id));
     }
 
+
     @PutMapping("/{id}")
     @Operation(summary = "Cập nhật chương trình khuyến mãi")
     public ResponseEntity<PromotionResponseDTO> update(
@@ -84,6 +85,7 @@ public class PromotionController {
         PromotionResponseDTO response = promotionService.update(id, dto);
         return ResponseEntity.ok(response);
     }
+
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Xóa chương trình khuyến mãi")
