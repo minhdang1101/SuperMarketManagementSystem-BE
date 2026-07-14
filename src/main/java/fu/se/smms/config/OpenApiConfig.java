@@ -11,21 +11,26 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
+    private static final String SECURITY_SCHEME_NAME = "bearerAuth";
+
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Customer Management API")
-                        .version("1.0")
-                        .description("RESTful API for customer management with JWT authentication"))
-                .addServersItem(new Server().url("http://localhost:8080"))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                        .title("Supermarket Management System API")
+                        .version("v1")
+                        .description("REST API documentation for the Supermarket Management System. "
+                                + "Use the Authorize button to provide a JWT access token."))
+                .addServersItem(new Server()
+                        .url("/")
+                        .description("Current server"))
+                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
                 .components(new Components()
-                        .addSecuritySchemes("bearerAuth",
+                        .addSecuritySchemes(SECURITY_SCHEME_NAME,
                                 new SecurityScheme()
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")
-                                        .description("Bearer token (JWT)")));
+                                        .description("Enter the JWT access token without the 'Bearer ' prefix.")));
     }
 }
