@@ -31,6 +31,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mssql-jdbc.version>12.8.1.jre11</mssql-jdbc.version>
+        <springdoc-openapi.version>3.0.3</springdoc-openapi.version>
     </properties>
     <dependencies>
         <dependency>
@@ -89,7 +90,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.8.8</version>
+            <version>${springdoc-openapi.version}</version>
         </dependency>
         <!--  JJWT (Java JWT)  -->
         <dependency>
