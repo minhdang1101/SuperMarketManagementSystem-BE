@@ -28,6 +28,8 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mssql-jdbc.version>12.8.1.jre11</mssql-jdbc.version>
         <springdoc-openapi.version>3.0.3</springdoc-openapi.version>
     </properties>
