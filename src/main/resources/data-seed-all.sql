@@ -40,7 +40,7 @@ BEGIN TRY
     IF NOT EXISTS (SELECT 1 FROM [user] WHERE username = 'manager')
         INSERT INTO [user]
             (username, password, name, email, phone, role_id, status, created_at, updated_at)
-        SELECT 'manager', @passwordHash, N'Trần Thu Hà', 'manager@smms.local', '0901000002',
+        SELECT 'manager', @passwordHash, N'Trần Thu Hà', 'minhdang110105@gmail.com', '0901000002',
                role_id, 1, DATEADD(day, -150, GETDATE()), GETDATE()
         FROM role WHERE role_name = 'MANAGER';
 
