@@ -6,12 +6,15 @@ import fu.se.smms.entity.RefreshToken;
 import fu.se.smms.entity.User;
 import fu.se.smms.service.AuthenticationService;
 import fu.se.smms.service.RefreshTokenService;
+import fu.se.smms.service.UserService;
+import jakarta.validation.Valid;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -31,18 +36,24 @@ public class AuthenticationController {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
     @Value("${jwt.refresh-expiration:604800000}")
     private long refreshExpirationMs;
 
+    @Value("${app.frontend-url:http://localhost:5173}")
+    private String frontendUrl;
+
     public AuthenticationController(AuthenticationService authenticationService,
                                     JwtTokenProvider jwtTokenProvider,
                                     RefreshTokenService refreshTokenService,
-                                    UserDetailsService userDetailsService) {
+                                    UserDetailsService userDetailsService,
+                                    UserService userService) {
         this.authenticationService = authenticationService;
         this.jwtTokenProvider = jwtTokenProvider;
         this.refreshTokenService = refreshTokenService;
         this.userDetailsService = userDetailsService;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -60,6 +71,15 @@ public class AuthenticationController {
 
         log.info("Login successful for user: {}", userDTO.getUsername());
         return ResponseEntity.ok(new LoginResponse(accessToken, jwtTokenProvider.getJwtExpiration()));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<StaffDTO> register(@RequestBody StaffDTO request) {
+        if (request.getRole() == null || request.getRole().isBlank()) {
+            request.setRole("CASHIER");
+        }
+        request.setStatus("Active");
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createStaff(request));
     }
 
     @PostMapping("/refresh")
@@ -88,6 +108,17 @@ public class AuthenticationController {
         }
         clearRefreshCookie(response);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, Object>> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO request) {
+        return ResponseEntity.ok(authenticationService.forgotPassword(request.getEmail(), frontendUrl));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@Valid @RequestBody ResetPasswordRequestDTO request) {
+        authenticationService.resetPassword(request.getToken(), request.getNewPassword());
+        return ResponseEntity.ok(Map.of("message", "Mật khẩu đã được đặt lại thành công."));
     }
 
     @GetMapping("/me")
