@@ -48,7 +48,7 @@ BEGIN
         'manager',
         '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',  -- password: "password"
         N'Quản lý',
-        'manager@smms.local',
+        'minhdang110105@gmail.com',
         '0902345678',
         (SELECT role_id FROM role WHERE role_name = 'MANAGER'),
         1,

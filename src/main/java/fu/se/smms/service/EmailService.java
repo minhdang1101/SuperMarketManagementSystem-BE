@@ -1,5 +1,5 @@
 package fu.se.smms.service;
 
 public interface EmailService {
-    void sendPasswordResetEmail(String to, String resetLink);
+    boolean sendPasswordResetEmail(String to, String resetLink);
 }
